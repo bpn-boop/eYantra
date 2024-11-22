@@ -8,6 +8,7 @@
             </div>
             <div class="col-sm-6 text-right">
                 <a href="categories.html" class="btn btn-primary">Back</a>
+               
             </div>
         </div>
     </div>
@@ -18,7 +19,7 @@
     <!-- Default box -->
     <div class="container-fluid">
         <form action="" method="post" id="categoryForm" name="categoryForm">
-
+            @csrf
             <div class="card">
                 <div class="card-body">
                     <div class="row">
@@ -26,12 +27,14 @@
                             <div class="mb-3">
                                 <label for="name">Name</label>
                                 <input type="text" name="name" id="name" class="form-control" placeholder="Name">
+                                <p></p>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="slug">Slug</label>
                                 <input type="text" name="slug" id="slug" class="form-control" placeholder="Slug">
+                                <p></p>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -60,24 +63,43 @@
 
 @section('customJS')
 <script>
-$("#categoryForm").submit(function(event)){
-    event.preventDefault();
-    var element = $(this);
+$("#categoryForm").submit(function(event)) {
+event.preventDefault(); // Prevent the default form submission
+var element = $(this);
 
-    $.ajax({
-        url: '{{ route("categories.store") }}';
-        type: 'post',
-        data: element.serializeArray(),
-        dataType: 'json',
-        headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Fetch the CSRF token
+
+$.ajax({
+    url: '{{ route("categories.store") }}',
+    type: 'post',
+    data: $("#categoryForm").serializeArray(), // Serialize the form data
+    dataType: 'json',
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Properly fetch the CSRF token
     },
-        success: function(response){
+    success: function(response) {
+        var errors = response['errors'];
 
-        }, error: function(jqXHR, exception){
-                console.log("Something went wrong");
+        // Handle 'name' validation errors
+        if (errors && errors['name']) {
+            $("#name").addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors['name'][0]); // Show the first error
+        } else {
+            $("#name").removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html("");
         }
-    })
+
+        // Handle 'slug' validation errors
+        if (errors && errors['slug']) {
+            $("#slug").addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(errors['slug'][0]); // Show the first error
+        } else {
+            $("#slug").removeClass('is-invalid').siblings('p').removeClass('invalid-feedback').html("");
+        }
+    },
+    error: function(jqXHR, exception) {
+        console.log("Something went wrong");
+    }
+});
+
 }
+
 </script>
 @endsection
+

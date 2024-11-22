@@ -11,6 +11,7 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('admin-assets/css/adminlte.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin-assets/css/custom.css') }}">
+    <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="hold-transition sidebar-mini">
@@ -83,6 +84,7 @@
     <script src="{{ asset('admin-assets/js/adminlte.min.js') }}"></script>
     <!-- AJAX Setup -->
     <script type="text/javascript">
+        // Ensure CSRF token is included in all AJAX requests
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
